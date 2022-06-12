@@ -1,4 +1,5 @@
 using DOtNetRPG.Models;
+using DOtNetRPG.Services.CharacterService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DOtNetRPG.Controllers
@@ -7,12 +8,30 @@ namespace DOtNetRPG.Controllers
     [Route("[controller]")]
     public class CharacterController : ControllerBase
     {
-        private static Character knight = new Character();
+        private readonly ICharacterService _characterService;
 
-        [HttpGet]
-        public ActionResult<Character> Get()
+        public CharacterController(ICharacterService characterService)
         {
-            return Ok(knight);
+            _characterService = characterService;
+
+        }
+
+        [HttpGet("GetAll")]
+        public ActionResult<List<Character>> Get()
+        {
+            return Ok(_characterService.GetAllCharacters());
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Character> GetSingle(int id)
+        {
+            return Ok(_characterService.GetCharacterById(id));
+        }
+
+        [HttpPost]
+        public ActionResult<List<Character>> AddCharacter(Character newCharacter)
+        {
+            return Ok(_characterService.AddCharacter(newCharacter));
         }
     }
 }
